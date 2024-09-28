@@ -1,0 +1,23 @@
+name: ranPlugin
+version: '${project.version}'
+main: me.evvv.ranPlugin.RanPlugin
+api-version: '1.21'
+commands:
+  nick:
+    description: Nick the player
+    usage: /nick <nickname>
+  house:
+    description: Generate a house at the players location.
+    usage: /house <roof|noroof>
+  sign:
+    description: Add lore to an item
+    usage: /sign <loretext>
+  hostevent:
+    description: Host an Event
+    usage: /hostevent
+  joinevent:
+    description: Join an event
+    usage: /joinevent
+  sendplayer:
+    description: send player to server
+    usage: /sendplayer <playername> <servername>
