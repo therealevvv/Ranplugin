@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -117,11 +118,32 @@ local function teleportNearbyNPCs()
 	local myHRP = char:FindFirstChild("HumanoidRootPart")
 	if not myHRP then return end
 
+	local nearbyNPCs = {}
 	for _, obj in ipairs(workspace:GetDescendants()) do
 		if obj:IsA("Part") and obj.Name == "HumanoidRootPart" then
 			local npc = obj.Parent
 			if isNPC(npc) and (obj.Position - myHRP.Position).Magnitude <= maxDistance then
-				obj.CFrame = myHRP.CFrame * CFrame.new(offset)
+				table.insert(nearbyNPCs, npc)
+			end
+		end
+	end
+
+	for _, npc in ipairs(nearbyNPCs) do
+		local enemyHRP = npc:FindFirstChild("HumanoidRootPart")
+		local enemyHumanoid = npc:FindFirstChild("Humanoid")
+
+		if enemyHRP and enemyHumanoid and enemyHumanoid.Health > 0 then
+			enemyHRP.CFrame = CFrame.new(5, 5, 5)
+
+			local tweenInfo = TweenInfo.new(0.5)
+			local targetCFrame = enemyHRP.CFrame * CFrame.new(0, 0, 5)
+			local tween = TweenService:Create(myHRP, tweenInfo, {CFrame = targetCFrame})
+			tween:Play()
+			tween.Completed:Wait()
+
+			while enemyHumanoid and enemyHumanoid.Parent and enemyHumanoid.Health > 0 do
+				firesignal(game:GetService("Players").LocalPlayer.PlayerGui.Mobile.Tablet.AttackTablet.Activated)
+				task.wait(0.8)
 			end
 		end
 	end
